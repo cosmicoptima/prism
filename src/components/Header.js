@@ -2,7 +2,8 @@ import "./Header.css"
 
 import React from "react"
 
-const randomImage = () => Math.ceil(Math.random() * 5)
+const N_IMAGES = 5
+const randomImage = () => Math.ceil(Math.random() * N_IMAGES)
 
 export default function Header() {
   let [image, setImage] = React.useState(randomImage())
@@ -33,7 +34,7 @@ export default function Header() {
     <img
       src={require(`../assets/prism${image}.png`).default}
       className="header-image"
-      onClick={() => setImage(image % 5 + 1)} />
+      onClick={() => setImage(image % N_IMAGES + 1)} />
     { inverted
     ? <span
         className="header-text header-text-inverted"

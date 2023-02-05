@@ -41,7 +41,7 @@
 }
 
 .graph-viewer-input {
-  background-color: #222;
+  background-color: #333;
   color: #ccc;
 
   display: flex;
@@ -51,7 +51,6 @@
 
   margin: 0.5rem 0.5rem 0 0.5rem;
   padding: 0.3rem;
-
 }
 
 .graph-viewer-input-inner {
@@ -62,4 +61,29 @@
   outline: none;
 
   flex: 1;
+  margin-left: 0.1rem;
+}
+
+.graph-viewer-list {
+  background-color: #222;
+  border-radius: 0.3rem;
+  margin: 0.5rem;
+  padding: 0.3rem 0.5rem;
+  flex: 1;
+}
+
+.graph-viewer-list-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  margin: 0.2rem 0;
+}
+
+.graph-viewer-list-item-delete {
+  margin-left: 0.1rem;
+}
+
+.graph-viewer-list-empty {
+  color: #888;
 }

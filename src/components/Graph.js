@@ -56,7 +56,7 @@ function Node(props) {
   )
 }
 
-export default function Graph({ apiKey, name }) {
+export default function Graph({ apiKey, name, updateGraphs }) {
   const config = new Configuration({ apiKey })
   const openai = new OpenAIApi(config)
 
@@ -67,8 +67,10 @@ export default function Graph({ apiKey, name }) {
   let [nodes, setNodes] = useState(initialNodes)
   let [focus, setFocus] = useState(null)
 
-  const save = () =>
+  const save = () => {
     localStorage.setItem(`graph-${name}`, JSON.stringify(nodes))
+    updateGraphs(name)
+  }
 
   const onEdit = (id, text) => {
     setNodes(nodes.map(node => {
@@ -156,16 +158,6 @@ export default function Graph({ apiKey, name }) {
           .map(node => "  ".repeat(node.indent) + node.text)
           .join("\n")
 
-      // let ancestors = []
-      // let current = nodes.find(node => node.id === id)
-      // while (current.parentId) {
-      //   current = nodes.find(node => node.id === current.parentId)
-      //   ancestors.push(current.text)
-      // }
-      // ancestors.reverse()
-
-      // const prompt_ = `${ancestors.join('\n')}${ancestors.length > 0 ? '\n' : ''}`
-
       openai.createCompletion({
         model: "code-davinci-002",
         prompt: prompt_,
@@ -199,6 +191,7 @@ export default function Graph({ apiKey, name }) {
   const props = { focus, nodes, onEdit, onKey }
 
   return <div className="graph">
+    <span className="graph-name">{name}</span>
     {nodes
       .filter(node => node.parentId === null)
       .map(node => <Node

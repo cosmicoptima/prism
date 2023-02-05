@@ -1,0 +1,65 @@
+.graph-viewer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.graph-viewer-api {
+  background-color: #222;
+  border-radius: 0.5rem;
+  margin: 0.5rem;
+  padding: 0.75rem;
+  width: 20rem;
+}
+
+.graph-viewer-api-text {
+  padding-bottom: 0.5rem;
+}
+
+.graph-viewer-api-input {
+  background-color: #333;
+  font-size: 1rem;
+
+  border: none;
+  border-radius: 0.3rem;
+  outline: none;
+
+  width: 100%;
+}
+
+.graph-viewer-api-submit {
+  background-color: #333;
+  cursor: pointer;
+  font-size: 0.9rem;
+
+  border: none;
+  border-radius: 0.3rem;
+  outline: none;
+
+  margin-top: 0.5rem;
+  padding: 0.3rem;
+}
+
+.graph-viewer-input {
+  background-color: #222;
+  color: #ccc;
+
+  display: flex;
+  align-items: center;
+
+  border-radius: 0.3rem;
+
+  margin: 0.5rem 0.5rem 0 0.5rem;
+  padding: 0.3rem;
+
+}
+
+.graph-viewer-input-inner {
+  background-color: transparent;
+  font-size: 1rem;
+
+  border: none;
+  outline: none;
+
+  flex: 1;
+}

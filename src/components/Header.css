@@ -1,0 +1,27 @@
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  height: 2rem;
+  margin: 0.75rem 0 0.5rem 0.5rem;
+}
+
+.header-image {
+  width: 2rem;
+  border-radius: 0.3rem;
+  cursor: pointer;
+}
+
+.header-text {
+  font-size: 2rem;
+  font-family: Karla, sans-serif;
+  margin-left: 0.5rem;
+  white-space: nowrap;
+}
+
+.header-text-inverted {
+  background-color: #ccc;
+  color: #000;
+  transform: rotate(180deg);
+}

@@ -1,0 +1,39 @@
+.node {
+  display: flex;
+  flex-direction: column;
+  margin-top: 0.4rem;
+}
+
+.node-content {
+  display: flex;
+  align-items: top;
+}
+
+.node-bullet {
+  width: 0.4rem;
+  height: 0.4rem;
+  background-color: #ccc;
+  border-radius: 50%;
+  margin: 0.5rem 0.5rem 0 0;
+}
+
+.node-text {
+  background-color: transparent;
+  color: #ccc;
+  font-size: 1rem;
+
+  border: none;
+  outline: none;
+
+  flex: 1;
+}
+
+[contenteditable] {
+  outline: none;
+}
+
+.node-children {
+  border-left: 1px solid #888;
+  margin-left: calc(0.2rem - 0.5px);
+  padding-left: 1rem;
+}

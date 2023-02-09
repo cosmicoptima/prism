@@ -14,7 +14,7 @@
   height: 0.4rem;
   background-color: #ccc;
   border-radius: 50%;
-  margin: 0.5rem 0.5rem 0 0;
+  margin: 0.5rem 0.4rem 0 0;
 }
 
 .node-text {
@@ -27,6 +27,8 @@
   border: none;
   border-radius: 0.3rem;
   outline: none;
+
+  padding: 0 0.1rem;
 }
 
 .node-text-red {

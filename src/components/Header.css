@@ -5,6 +5,8 @@
 
   height: 2rem;
   margin: 0.75rem 0 0.5rem 0.5rem;
+
+  overflow: hidden;
 }
 
 .header-image {

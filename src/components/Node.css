@@ -18,18 +18,27 @@
 }
 
 .node-text {
+  flex: 1;
+
   background-color: transparent;
   color: #ccc;
   font-size: 1rem;
 
   border: none;
+  border-radius: 0.3rem;
   outline: none;
-
-  flex: 1;
 }
 
-[contenteditable] {
-  outline: none;
+.node-text-red {
+  background-color: #600;
+}
+
+.node-text-yellow {
+  background-color: #660;
+}
+
+.node-text-green {
+  background-color: #060;
 }
 
 .node-children {

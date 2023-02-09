@@ -2,6 +2,7 @@ import Graph from "./Graph.js"
 import Header from "./Header.js"
 import "./GraphViewer.css"
 
+import AddCircle from "@mui/icons-material/AddCircle"
 import Delete from "@mui/icons-material/Delete"
 import Description from "@mui/icons-material/Description"
 import React, { createRef, useState } from "react"
@@ -31,12 +32,17 @@ function GraphList({ graphs, deleteGraph, setGraph }) {
           .sort((a, b) => b.time - a.time)
           .map(g => <div
             className="graph-viewer-list-item"
-            key={g.name}
-            onClick={() => setGraph(g.name)}>
-              {g.name}
+            key={g.name}>
+              <span
+                className="graph-viewer-list-item-text"
+                onClick={() => setGraph(g.name)}
+                title={g.name}>
+                <Description className="graph-viewer-list-item-icon" fontSize="small" />
+                {g.name}
+              </span>
               {graphs.length > 1
               ? <Delete
-                  className="graph-viewer-list-item-delete"
+                  className="graph-viewer-list-item-icon"
                   fontSize="small"
                   onClick={() => deleteGraph(g.name)} />
               : null}
@@ -49,7 +55,7 @@ function GraphList({ graphs, deleteGraph, setGraph }) {
 export default function GraphViewer() {
   let [apiKey, setApiKey] = useState(localStorage.getItem("apiKey"))
   let [graphs, setGraphs] = useState(JSON.parse(localStorage.getItem("graphs")) || [])
-  let [graph, setGraph] = useState("home")
+  let [graph, setGraph] = useState(graphs[0]?.name || "home")
 
   const onKey = e => {
     if (e.key === "Enter")
@@ -87,16 +93,20 @@ export default function GraphViewer() {
     <Header />
     {apiKey
     ? <>
-        <div className="graph-viewer-input">
-          <Description fontSize="small" />
-          <input
-            className="graph-viewer-input-inner"
-            placeholder="..."
-            type="text"
-            onKeyDown={onKey} />
+        <div className="graph-viewer-body">
+          <div className="graph-viewer-sidebar">
+            <div className="graph-viewer-input">
+              <AddCircle fontSize="small" />
+              <input
+                className="graph-viewer-input-inner"
+                placeholder="..."
+                type="text"
+                onKeyDown={onKey} />
+            </div>
+            <GraphList graphs={graphs} setGraph={setGraph} deleteGraph={deleteGraph} />
+          </div>
+          <Graph key={graph} apiKey={apiKey} name={graph} updateGraphs={updateGraphs} />
         </div>
-        <GraphList graphs={graphs} setGraph={setGraph} deleteGraph={deleteGraph} />
-        <Graph key={graph} apiKey={apiKey} name={graph} updateGraphs={updateGraphs} />
       </>
     : <APIKeyModal callback={apiCallback} />}
   </div>

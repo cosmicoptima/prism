@@ -3,9 +3,9 @@ import "./Node.css"
 
 import { nanoid } from "nanoid"
 import { Configuration, OpenAIApi } from "openai"
-import React, { createRef, useEffect, useState } from "react"
-import ContentEditable from "react-contenteditable"
+import React, { createRef, useEffect, useRef, useState } from "react"
 import { Oval } from "react-loader-spinner"
+import { useBeforeunload } from "react-beforeunload"
 
 const createEmptyNode = parentId => ({
   id: nanoid(),
@@ -19,6 +19,10 @@ function Node(props) {
 
   const { focus, nodes, onEdit, onKey } = props
   const childProps = { focus, nodes, onEdit, onKey }
+
+  useBeforeunload(() => {
+    onEdit(props.id, ref.current.innerText)
+  })
 
   useEffect(() => {
     if (focus === props.id) ref.current.focus()
@@ -36,15 +40,16 @@ function Node(props) {
           strokeWidth={6}
           secondaryStrokeWidth={6}
           visible={props.pending} />
-        <ContentEditable
-          className="node-text"
-          disabled={props.pending}
-          onBlur={() => onEdit(props.id, ref.current.innerText)}
-          onChange={() => onEdit(props.id, ref.current.innerText)}
-          onKeyDown={e => onKey(e, props.id, ref.current.innerText)}
+        <div
+          className={`node-text${props.color ? ` node-text-${props.color}` : ""}`}
+          contentEditable={!props.pending}
+          ref={ref}
+          suppressContentEditableWarning={true} 
           spellCheck={false}
-          innerRef={ref}
-          html={props.text} />
+          onBlur={e => onEdit(props.id, e.target.innerText)}
+          onKeyDown={e => onKey(e, props.id, e.target.innerText)}>
+          {props.text}
+        </div>
       </div>
 
       <div className="node-children">
@@ -67,19 +72,16 @@ export default function Graph({ apiKey, name, updateGraphs }) {
   let [nodes, setNodes] = useState(initialNodes)
   let [focus, setFocus] = useState(null)
 
-  const save = () => {
+  useEffect(() => {
     localStorage.setItem(`graph-${name}`, JSON.stringify(nodes))
     updateGraphs(name)
-  }
+  }, [nodes])
 
-  const onEdit = (id, text) => {
+  const onEdit = (id, text) =>
     setNodes(nodes.map(node => {
       if (node.id === id) return { ...node, text }
       return node
     }))
-    
-    save()
-  }
 
   const onKey = (e, id, text) => {
     setFocus(null)
@@ -152,25 +154,27 @@ export default function Graph({ apiKey, name, updateGraphs }) {
           indentedNodes.push({ id: node.id, text: node.text, indent: parentNode.indent + 1 })
         }
 
-      console.log(indentedNodes)
-
       const prompt_ = indentedNodes
-          .map(node => "  ".repeat(node.indent) + node.text)
+          .map(node => "  ".repeat(node.indent) + "-* " + node.text)
           .join("\n")
+      console.log(prompt_)
 
       openai.createCompletion({
         model: "code-davinci-002",
         prompt: prompt_,
         max_tokens: 256,
-        stop: "\n",
         temperature: 1,
-      }).then(response => {
-        setNodes(nodes.map(node => {
-          if (node.id === id)
-            return { ...node, text: response.data.choices[0].text.trim(), pending: false }
-          return node
+        stop: ["\n"],
+      }).then(res =>
+          setNodes(nodes.map(node => {
+            if (node.id === id) return {
+              ...node,
+              text: res.data.choices[0].text,
+              pending: false 
+            }
+            return node
         }))
-      })
+      )
 
     } else if (e.key === "ArrowUp") {
       e.preventDefault()
@@ -183,9 +187,15 @@ export default function Graph({ apiKey, name, updateGraphs }) {
 
       const index = nodes.findIndex(node => node.id === id)
       if (index < nodes.length - 1) setFocus(nodes[index + 1].id)
-    }
 
-    save()
+    } else if (e.ctrlKey && e.key >= "1" && e.key <= "3") {
+      let color = e.key === "1" ? "red" : e.key === "2" ? "yellow" : "green"
+
+      const node = nodes.find(node => node.id === id)
+      if (node.color === color) color = null
+
+      setNodes(nodes.map(node => node.id === id ? { ...node, color } : node))
+    }
   }
 
   const props = { focus, nodes, onEdit, onKey }

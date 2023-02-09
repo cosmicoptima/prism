@@ -1,5 +1,6 @@
 .graph {
   flex: 1;
+  max-width: 40rem;
   padding: 0.5rem 1rem;
 }
 

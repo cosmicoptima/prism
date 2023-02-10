@@ -58,8 +58,10 @@ export default function GraphViewer() {
   let [graph, setGraph] = useState(graphs[0]?.name || "home")
 
   const onKey = e => {
-    if (e.key === "Enter")
+    if (e.key === "Enter") {
       setGraph(e.target.value)
+      e.target.value = ""
+    }
   }
 
   const apiCallback = key => {
@@ -79,14 +81,22 @@ export default function GraphViewer() {
   }
 
   const deleteGraph = name => {
-    // if (name === graph)
-    //   setGraph("home")
-
     const newGraphs = graphs.filter(g => g.name !== name)
     setGraphs(newGraphs)
     localStorage.setItem("graphs", JSON.stringify(newGraphs))
 
     localStorage.removeItem(`graph-${name}`)
+  }
+
+  const renameGraph = (oldName, newName) => {
+    const newGraphs = graphs.map(g => g.name === oldName ? { ...g, name: newName } : g)
+    setGraphs(newGraphs)
+    localStorage.setItem("graphs", JSON.stringify(newGraphs))
+
+    localStorage.setItem(`graph-${newName}`, localStorage.getItem(`graph-${oldName}`))
+    localStorage.removeItem(`graph-${oldName}`)
+
+    setGraph(newName)
   }
 
   return <div className="graph-viewer">
@@ -105,7 +115,12 @@ export default function GraphViewer() {
             </div>
             <GraphList graphs={graphs} setGraph={setGraph} deleteGraph={deleteGraph} />
           </div>
-          <Graph key={graph} apiKey={apiKey} name={graph} updateGraphs={updateGraphs} />
+          <Graph
+            key={graph}
+            apiKey={apiKey}
+            name={graph}
+            updateGraphs={updateGraphs}
+            renameGraph={renameGraph} />
         </div>
       </>
     : <APIKeyModal callback={apiCallback} />}

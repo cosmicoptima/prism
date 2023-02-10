@@ -35,8 +35,8 @@ function Node(props) {
         <Oval
           color="#ccc"
           secondaryColor="#444"
-          height={14}
-          width={14}
+          height={13}
+          width={13}
           strokeWidth={6}
           secondaryStrokeWidth={6}
           visible={props.pending} />
@@ -61,7 +61,7 @@ function Node(props) {
   )
 }
 
-export default function Graph({ apiKey, name, updateGraphs }) {
+export default function Graph({ apiKey, name, renameGraph, updateGraphs }) {
   const config = new Configuration({ apiKey })
   const openai = new OpenAIApi(config)
 
@@ -91,9 +91,14 @@ export default function Graph({ apiKey, name, updateGraphs }) {
 
       const newNode = createEmptyNode(nodes.find(node => node.id === id).parentId)
 
-      const children = nodes.filter(node => node.parentId === id)
-      const putAfter = children.length ? children[children.length - 1].id : id
-      const index = nodes.findIndex(node => node.id === putAfter)
+      let index
+      if (e.shiftKey) {
+        index = nodes.findIndex(node => node.id === id) - 1
+      } else {
+        const children = nodes.filter(node => node.parentId === id)
+        const putAfter = children.length ? children[children.length - 1].id : id
+        index = nodes.findIndex(node => node.id === putAfter)
+      }
 
       setNodes([...nodes.slice(0, index + 1), newNode, ...nodes.slice(index + 1)])
       setFocus(newNode.id)
@@ -201,7 +206,13 @@ export default function Graph({ apiKey, name, updateGraphs }) {
   const props = { focus, nodes, onEdit, onKey }
 
   return <div className="graph">
-    <span className="graph-name">{name}</span>
+    <span
+      className="graph-name"
+      contentEditable={true}
+      onBlur={e => renameGraph(name, e.target.innerText)}
+      spellCheck={false}>
+      {name}
+    </span>
     {nodes
       .filter(node => node.parentId === null)
       .map(node => <Node

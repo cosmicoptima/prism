@@ -62,7 +62,7 @@
   border-radius: 0.3rem 0.3rem 0 0;
 
   margin: 0.5rem 0.5rem 0 0.5rem;
-  padding: 0.3rem;
+  padding: 0.25rem;
 }
 
 .graph-viewer-input-inner {
@@ -88,7 +88,7 @@
   margin: 0 0.5rem;
   padding: 0.3rem 0;
   height: auto;
-  width: 15rem;
+  width: 18rem;
 }
 
 .graph-viewer-list-item {
@@ -96,11 +96,17 @@
   flex-direction: row;
   align-items: center;
 
-  padding: 0.2rem;
+  padding: 0.25rem;
+
+  box-sizing: border-box;
 }
 
 .graph-viewer-list-item:hover {
   background-color: #444;
+}
+
+.graph-viewer-list-item-drop {
+  border-top: 0.2rem solid #888;
 }
 
 .graph-viewer-list-item-icon {

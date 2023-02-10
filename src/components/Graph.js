@@ -210,7 +210,9 @@ export default function Graph({ apiKey, name, renameGraph, updateGraphs }) {
       className="graph-name"
       contentEditable={true}
       onBlur={e => renameGraph(name, e.target.innerText)}
-      spellCheck={false}>
+      onKeyDown={e => e.key === "Enter" && e.target.blur()}
+      spellCheck={false}
+      suppressContentEditableWarning={true}>
       {name}
     </span>
     {nodes

@@ -3,7 +3,7 @@ import Header from "./Header.js"
 import "./GraphViewer.css"
 
 import AddCircle from "@mui/icons-material/AddCircle"
-import Delete from "@mui/icons-material/Delete"
+import Delete from "@mui/icons-material/DeleteOutlined"
 import Description from "@mui/icons-material/Description"
 import React, { createRef, useState } from "react"
 
@@ -24,14 +24,23 @@ function APIKeyModal({ callback }) {
   </div>
 }
 
-function GraphList({ graphs, deleteGraph, setGraph }) {
+function GraphList({ graphs, deleteGraph, repositionGraph, setGraph }) {
+  let [dropTarget, setDropTarget] = useState(null)
+
   return <div className="graph-viewer-list">
     {graphs.length
       ? <>
         {graphs
-          .sort((a, b) => b.time - a.time)
           .map(g => <div
-            className="graph-viewer-list-item"
+            className={
+              `graph-viewer-list-item${g.name === dropTarget ? " graph-viewer-list-item-drop" : ""}`}
+            draggable={true}
+            onDragStart={e => e.dataTransfer.setData("text/plain", g.name) }
+            onDragOver={e => { e.preventDefault(); setDropTarget(g.name) }}
+            onDrop={e => { repositionGraph(
+              e.dataTransfer.getData("text/plain"),
+              g.name
+            ); setDropTarget(null) }}
             key={g.name}>
               <span
                 className="graph-viewer-list-item-text"
@@ -69,17 +78,6 @@ export default function GraphViewer() {
     setApiKey(key)
   }
 
-  const updateGraphs = name => {
-    let newGraphs
-    if (graphs.find(g => g.name === name))
-      newGraphs = graphs.map(g => g.name === name ? { ...g, time: Date.now() } : g)
-    else
-      newGraphs = [...graphs, { name, time: Date.now() }]
-
-    setGraphs(newGraphs)
-    localStorage.setItem("graphs", JSON.stringify(newGraphs))
-  }
-
   const deleteGraph = name => {
     const newGraphs = graphs.filter(g => g.name !== name)
     setGraphs(newGraphs)
@@ -99,6 +97,25 @@ export default function GraphViewer() {
     setGraph(newName)
   }
 
+  const repositionGraph = (sourceName, targetName) => {
+    const sourceIndex = graphs.findIndex(g => g.name === sourceName)
+    const targetIndex = graphs.findIndex(g => g.name === targetName)
+    const source = graphs[sourceIndex]
+    const newGraphs = [...graphs]
+    newGraphs.splice(sourceIndex, 1)
+    newGraphs.splice(targetIndex, 0, source)
+    setGraphs(newGraphs)
+    localStorage.setItem("graphs", JSON.stringify(newGraphs))
+  }
+
+  const updateGraphs = name => {
+    if (!graphs.find(g => g.name === name)) {
+      const newGraphs = [...graphs, { name }]
+      setGraphs(newGraphs)
+      localStorage.setItem("graphs", JSON.stringify(newGraphs))
+    }
+  }
+
   return <div className="graph-viewer">
     <Header />
     {apiKey
@@ -113,14 +130,18 @@ export default function GraphViewer() {
                 type="text"
                 onKeyDown={onKey} />
             </div>
-            <GraphList graphs={graphs} setGraph={setGraph} deleteGraph={deleteGraph} />
+            <GraphList
+              graphs={graphs}
+              deleteGraph={deleteGraph}
+              repositionGraph={repositionGraph}
+              setGraph={setGraph} />
           </div>
           <Graph
             key={graph}
             apiKey={apiKey}
             name={graph}
-            updateGraphs={updateGraphs}
-            renameGraph={renameGraph} />
+            renameGraph={renameGraph}
+            updateGraphs={updateGraphs} />
         </div>
       </>
     : <APIKeyModal callback={apiCallback} />}
